@@ -30,6 +30,8 @@ public class HomeActivity extends AppCompatActivity {
         payPalButton = (Button) findViewById(R.id.button_paypal);
         payPalButton.setVisibility(View.INVISIBLE);
 
+ //       deleteFile("paypal_credentials");
+
         boolean hasAddedPaypal = true;
         try(FileInputStream fis = openFileInput("paypal_credentials")) {
         } catch (FileNotFoundException e) {

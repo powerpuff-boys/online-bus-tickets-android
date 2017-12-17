@@ -13,7 +13,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Calendar;
+
+import http.HttpUtil;
+import http.Utils;
 
 
 public class TicketInformationActivity extends AppCompatActivity {
@@ -27,11 +33,29 @@ public class TicketInformationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket_information);
 
-        String ticketId = "";
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            ticketId = extras.getString("ticketInfo");
+        String ticket_info = "";
+        try (FileInputStream fis = openFileInput("bus_information")) {
+            int size;
+            while ((size = fis.read()) != -1) {
+                ticket_info += Character.toString((char) size);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        String[] values = ticket_info.split("@");
+        final String ticketId = values[0];
+        final String createdOn = values[1];
+        final String expiresOn = values[2];
+
+//        String ticketId = "";
+//        String expiration = "";
+//        Bundle extras = getIntent().getExtras();
+//        if (extras != null) {
+//            ticketId = extras.getString("ticketId");
+//            expiration = extras.getString("expiration");
+//        }
 
         image = (ImageView) findViewById(R.id.image);
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
@@ -44,44 +68,30 @@ public class TicketInformationActivity extends AppCompatActivity {
             we.printStackTrace();
         }
 
-        Time today = new Time(Time.getCurrentTimezone());
-        today.setToNow();
+        startDate = (TextView)findViewById(R.id.date_time_start);
+        startDate.setText("Bought on: " + createdOn);
 
-        startDate = (TextView) findViewById(R.id.date_time_start);
-
-        StringBuilder start = new StringBuilder();
-        start.append("Bought on: ");
-        start.append(today.monthDay).append("/").append(today.month + 1).append("/").append(today.year).append(" ");
-        start.append(today.hour).append(":").append(today.minute);
-        startDate.setText(start.toString());
-
-        endDate = (TextView) findViewById(R.id.date_time_end);
-
-        StringBuilder end = new StringBuilder();
-        end.append("Expires on: ");
-        end.append(today.monthDay).append("/").append(today.month + 1).append("/").append(today.year).append(" ");
-        end.append(today.hour + 2).append(":").append(today.minute);
-        endDate.setText(end.toString());
+        endDate = (TextView)findViewById(R.id.date_time_end);
+        endDate.setText("Expires on: " + expiresOn);
 
 
-//        String busInfo = "";
-//        Bundle extras = getIntent().getExtras();
-//        if (extras != null) {
-//            busInfo = extras.getString("busInfo");
-//        }
-//        String[] values = busInfo.split(" ");
+//        Time today = new Time(Time.getCurrentTimezone());
+//        today.setToNow();
 
-//        ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linLayout);
-//        Button button = new Button(this);
-//        button.setText("Ticket 1");
-//        button.setTextSize(22);
-//        button.setGravity(Gravity.CENTER);
+//        startDate = (TextView) findViewById(R.id.date_time_start);
 //
-//        linearLayout.addView(button);
+//        StringBuilder start = new StringBuilder();
+//        start.append("Bought on: ");
+//        start.append(today.monthDay).append("/").append(today.month + 1).append("/").append(today.year).append(" ");
+//        start.append(today.hour).append(":").append(today.minute);
+//        startDate.setText(start.toString());
 //
-//        this.setContentView(linearLayout, new LinearLayout.LayoutParams(
-//                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-//        TextView busInfoDisplay = (TextView) findViewById(R.id.busInfo);
-//        busInfoDisplay.setText(busInfo);
+//        endDate = (TextView) findViewById(R.id.date_time_end);
+//
+//        StringBuilder end = new StringBuilder();
+//        end.append("Expires on: ");
+//        end.append(expiration);
+//        endDate.setText(end.toString());
+
     }
 }

@@ -62,17 +62,6 @@ public class PayPalPaymentActivity extends AppCompatActivity {
                     busId = extras.getString("busId");
                 }
 
-                //Write to file busId,startDate,EndDate
-//                try {
-//                    FileOutputStream fos = openFileOutput("bus_information", Context.MODE_PRIVATE);
-//                    fos.write(busId.toString().getBytes());
-//                    fos.write(':');
-//                    //NOT FINISHED
-//                    fos.close();
-//                }catch (IOException e){
-//                    e.printStackTrace();
-//                }
-
                 Ticket ticket = null;
                 TicketHttpClient thc = null;
                 Ticket createdTicket = null;
@@ -105,10 +94,27 @@ public class PayPalPaymentActivity extends AppCompatActivity {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+
+                //Write to file busId,startDate,EndDate
+                try {
+                    FileOutputStream fos = openFileOutput("bus_information", Context.MODE_PRIVATE);
+
+                    fos.write(createdTicket.getId().getBytes());
+                    fos.write('@');
+                    String date1 = Utils.simpleDateFormat.format(createdTicket.getCreatedOn());
+                    fos.write(date1.getBytes());
+                    fos.write('@');
+                    String date2 = Utils.simpleDateFormat.format(createdTicket.getExpiresOn());
+                    fos.write(date2.getBytes());
+                    fos.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+
                 //Send to server
-                Intent i = new Intent(PayPalPaymentActivity.this,HomeActivity.class);
-                i.putExtra("ticketId", createdTicket.getId());
-                i.putExtra("expiration", createdTicket.getExpiresOn());
+                Intent i = new Intent(PayPalPaymentActivity.this,TicketInformationActivity.class);
+//                i.putExtra("ticketId", createdTicket.getId());
+//                i.putExtra("expiration", Utils.simpleDateFormat.format(createdTicket.getExpiresOn()));
                 startActivity(i);
             }
         });
