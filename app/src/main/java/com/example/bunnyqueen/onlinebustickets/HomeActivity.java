@@ -28,17 +28,17 @@ public class HomeActivity extends AppCompatActivity {
         boolean hasAddedPaypal = true;
         deleteFile("paypal_credentials");
 
-        try {
-            FileInputStream fis = openFileInput("paypal_credentials");
-            fis.close();
-
-        }catch (java.io.FileNotFoundException e){
-            payPalButton.setVisibility(View.VISIBLE);
-            hasAddedPaypal = false;
-            e.printStackTrace();
-        }catch(java.io.IOException e){
-            e.printStackTrace();
-        }
+//        try {
+//            FileInputStream fis = openFileInput("paypal_credentials");
+//            fis.close();
+//
+//        }catch (java.io.FileNotFoundException e){
+//            payPalButton.setVisibility(View.VISIBLE);
+//            hasAddedPaypal = false;
+//            e.printStackTrace();
+//        }catch(java.io.IOException e){
+//            e.printStackTrace();
+//        }
 
         if(!hasAddedPaypal) {
             payPalButton.setOnClickListener(new View.OnClickListener() {

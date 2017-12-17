@@ -10,12 +10,15 @@ import android.widget.TextView;
 
 public class TicketInformationActivity extends AppCompatActivity {
 
-    Button ticketInfoButton;
+//    Button ticketInfoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket_information);
+
+        Bundle b;
+
 
 //        String busInfo = "";
 //        Bundle extras = getIntent().getExtras();

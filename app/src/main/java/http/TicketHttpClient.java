@@ -1,20 +1,13 @@
 package http;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,59 +20,133 @@ public class TicketHttpClient {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
 
+    private URL serverEndpoint;
+
     private HttpURLConnection httpClientConnection;
-    private HttpResponse httpResponse;
-    private StringEntity stringEntity;
     private Gson gson;
-    private TicketDto ticketDto;
 
     public TicketHttpClient() throws IOException {
-        URL serverEndpoint = new URL(HttpUtil.ENDPOINT);
-        httpClientConnection = (HttpURLConnection) serverEndpoint.openConnection();
+        serverEndpoint = new URL(HttpUtil.ENDPOINT);
         gson = new GsonBuilder().create();
     }
 
     public Ticket createTicket(Ticket ticket, String username, String password)
-            throws ClientProtocolException, IOException {
-        HttpPost httpPost = new HttpPost(HttpUtil.ENDPOINT);
-        httpClientConnection.setRequestMethod("POST");
+            throws IOException {
+        try {
+            httpClientConnection = (HttpURLConnection) serverEndpoint.openConnection();
+            httpClientConnection.setRequestMethod("POST");
 
-        httpClientConnection.addRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
-        httpClientConnection.addRequestProperty(ACCEPT, APPLICATION_JSON);
-        httpClientConnection.addRequestProperty(AUTHORIZATION, BASIC + HttpUtil.buildEncodedCredentials(username, password));
 
-        stringEntity = new StringEntity(gson.toJson(TicketConvertor.convertToDto(ticket)));
-        httpPost.setEntity(stringEntity);
+            httpClientConnection.addRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
+            httpClientConnection.addRequestProperty(ACCEPT, APPLICATION_JSON);
+            httpClientConnection.addRequestProperty(AUTHORIZATION, BASIC + HttpUtil.buildEncodedCredentials(username, password));
 
-        httpResponse = httpClientConnection.execute(httpPost);
-        String string = IOUtils.toString(httpResponse.getEntity().getContent(), ENCODING_UTF);
+            httpClientConnection.setDoInput(true);
+            httpClientConnection.setChunkedStreamingMode(0);
 
-        return TicketConvertor.convertToTicket(gson.fromJson(string, TicketDto.class));
+            OutputStream out = new BufferedOutputStream(httpClientConnection.getOutputStream());
+            String ticketGson = gson.toJson(TicketConvertor.convertToDto(ticket));
+            writeStream(out, ticketGson);
+
+            int responseCode = httpClientConnection.getResponseCode();
+            System.out.print("PUTKATAAAAAA " + responseCode);
+            BufferedReader responseInputStream = new BufferedReader(new InputStreamReader(httpClientConnection.getInputStream()));
+
+
+            String result = null;
+            StringBuffer response = new StringBuffer();
+            while ((result = responseInputStream.readLine()) != null) {
+                response.append(result);
+            }
+            responseInputStream.close();
+            System.out.print("The result of the response" + response.toString());
+
+            Ticket penis2 = TicketConvertor.convertToTicket(gson.fromJson(response.toString(), TicketDto.class));
+
+            return penis2;
+        } catch(Exception e){
+            e.printStackTrace();
+        }finally {
+            if (httpClientConnection != null) {
+                httpClientConnection.disconnect();
+            }
+        }
+        return null;
+    }
+
+    private void writeStream(OutputStream out, String data) throws IOException {
+        out.write(data.getBytes());
+        out.flush();
+        out.close();
     }
 
     public Ticket updateTicket(String ticketId, Ticket ticket, String username, String password)
-            throws ClientProtocolException, IOException {
-        HttpPut httpPut = new HttpPut(HttpUtil.buildUrlWith(ticketId));
-        httpPut.setHeader(CONTENT_TYPE, APPLICATION_JSON);
-        httpPut.setHeader(ACCEPT, APPLICATION_JSON);
-        httpPut.setHeader(AUTHORIZATION, BASIC + HttpUtil.buildEncodedCredentials(username, password));
+            throws  IOException {
+        try {
+            URL customEndpoint = new URL(HttpUtil.ENDPOINT + "/" + ticketId);
+            httpClientConnection = (HttpURLConnection) customEndpoint.openConnection();
+            httpClientConnection.setRequestMethod("PUT");
 
-        stringEntity = new StringEntity(gson.toJson(TicketConvertor.convertToDto(ticket)));
-        httpPut.setEntity(stringEntity);
+            httpClientConnection.addRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
+            httpClientConnection.addRequestProperty(ACCEPT, APPLICATION_JSON);
 
-        httpResponse = httpClientConnection.execute(httpPut);
-        ticketDto = gson.fromJson(EntityUtils.toString(httpResponse.getEntity()), TicketDto.class);
-        return TicketConvertor.convertToTicket(ticketDto);
+            httpClientConnection.setDoInput(true);
+            httpClientConnection.setChunkedStreamingMode(0);
+//        httpPut.setHeader(AUTHORIZATION, BASIC + HttpUtil.buildEncodedCredentials(username, password));
+
+            OutputStream out = new BufferedOutputStream(httpClientConnection.getOutputStream());
+            String ticketString = gson.toJson(TicketConvertor.convertToDto(ticket));
+            writeStream(out, ticketString);
+
+            int responseCode = httpClientConnection.getResponseCode();
+            System.out.print("PUTKATAAAAAA " + responseCode);
+            BufferedReader responseInputStream = new BufferedReader(new InputStreamReader(httpClientConnection.getInputStream()));
+
+
+            String result = null;
+            StringBuffer response = new StringBuffer();
+            while ((result = responseInputStream.readLine()) != null) {
+                response.append(result);
+            }
+            responseInputStream.close();
+            System.out.print("The result of the response" + response.toString());
+
+            return TicketConvertor.convertToTicket(gson.fromJson(response.toString(), TicketDto.class));
+        } finally {
+            if (httpClientConnection != null) {
+                httpClientConnection.disconnect();
+            }
+        }
     }
 
-    public Ticket getTicketBy(String ticketId) throws ClientProtocolException, IOException {
-        HttpGet httpGet = new HttpGet(HttpUtil.buildUrlWith(ticketId));
-        httpGet.setHeader(ACCEPT, APPLICATION_JSON);
+    public Ticket getTicketBy(String ticketId) throws IOException {
+        try{
+            URL customEndpoint = new URL(HttpUtil.ENDPOINT + "/" + ticketId);
+            httpClientConnection = (HttpURLConnection) customEndpoint.openConnection();
+            httpClientConnection.setRequestMethod("GET");
 
-        httpResponse = httpClientConnection.execute(httpGet);
-        HttpEntity entity = httpResponse.getEntity();
-        String entityString = IOUtils.toString(entity.getContent(), ENCODING_UTF);
-        return TicketConvertor.convertToTicket(gson.fromJson(entityString, TicketDto.class));
+            httpClientConnection.addRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
+            httpClientConnection.addRequestProperty(ACCEPT, APPLICATION_JSON);
+
+            int responseCode = httpClientConnection.getResponseCode();
+            System.out.print("PUTKATAAAAAA " + responseCode);
+            BufferedReader responseInputStream = new BufferedReader(new InputStreamReader(httpClientConnection.getInputStream()));
+
+
+            String result = null;
+            StringBuffer response = new StringBuffer();
+            while ((result = responseInputStream.readLine()) != null) {
+                response.append(result);
+            }
+            responseInputStream.close();
+            System.out.print("The result of the response" + response.toString());
+
+            return TicketConvertor.convertToTicket(gson.fromJson(response.toString(), TicketDto.class));
+        }finally{
+            if (httpClientConnection != null){
+                httpClientConnection.disconnect();
+            }
+        }
     }
 
 }
