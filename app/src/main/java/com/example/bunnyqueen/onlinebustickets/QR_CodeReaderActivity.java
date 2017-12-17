@@ -107,34 +107,41 @@ public class QR_CodeReaderActivity extends AppCompatActivity {
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
-                Ticket ticket = null;
-                if (qrcodes.size() != 0) {
-                    TicketHttpClient thc = null;
-                    try {
-                        thc = new TicketHttpClient();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        // Read username and pass from file
-                        String busId = qrcodes.valueAt(0).displayValue;
-                        Date dateCreated = Utils.simpleDateFormat.parse("2017-12-17T02:37:20");
-                        ticket = thc.createTicket(new Ticket(busId, dateCreated,false),"encho.belezirev@sap.com","fmi-codes");
-                        //ticket.getId();
-                    } catch (IOException | ParseException e) {
-                        e.printStackTrace();
-                    }
 
-                    gotoNextActivity();
-                    //gotoNextActivity(qrcodes.valueAt(0).displayValue);
-                    //gotoNextActivity(ticket.getId());
+                if (qrcodes.size() != 0) {
+                    gotoNextActivity(qrcodes.valueAt(0).displayValue);
                 }
+//                Ticket ticket = null;
+//                if (qrcodes.size() != 0) {
+//                    TicketHttpClient thc = null;
+//                    try {
+//                        thc = new TicketHttpClient();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                    try {
+//                        // Read username and pass from file
+//                        String busId = qrcodes.valueAt(0).displayValue;
+//                        Date dateCreated = Utils.simpleDateFormat.parse("2017-12-17T02:37:20");
+//                        ticket = thc.createTicket(new Ticket(busId, dateCreated,false),"encho.belezirev@sap.com","fmi-codes");
+//                        //ticket.getId();
+//                    } catch (IOException | ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                    gotoNextActivity();
+//                }
             }
         });
     }
 
     public void gotoNextActivity() {
-        Intent i = new Intent(QR_CodeReaderActivity.this,PayPalPaymentActivity.class);
+        Intent i = new Intent(QR_CodeReaderActivity.this, PayPalPaymentActivity.class);
+        startActivity(i);
+    }
+
+    public void gotoNextActivity(String busId) {
+        Intent i = new Intent(QR_CodeReaderActivity.this, PayPalPaymentActivity.class);
+        i.putExtra("busId",busId);
         startActivity(i);
     }
 

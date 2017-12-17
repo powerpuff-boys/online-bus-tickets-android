@@ -39,7 +39,7 @@ public class AddPayPalActivity extends AppCompatActivity {
                 try {
                     FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
                     fos.write(email.getText().toString().getBytes());
-                    fos.write(' ');
+                    fos.write(':');
                     fos.write(pass.getText().toString().getBytes());
                     fos.close();
                 }catch (IOException e){

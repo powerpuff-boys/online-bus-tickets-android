@@ -44,6 +44,7 @@ public class TicketHttpClient {
             httpClientConnection.setDoInput(true);
             httpClientConnection.setChunkedStreamingMode(0);
 
+            httpClientConnection.connect();
             OutputStream out = new BufferedOutputStream(httpClientConnection.getOutputStream());
             String ticketGson = gson.toJson(TicketConvertor.convertToDto(ticket));
             writeStream(out, ticketGson);

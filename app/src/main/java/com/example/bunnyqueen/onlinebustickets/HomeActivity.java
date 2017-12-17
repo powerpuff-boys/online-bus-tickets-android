@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -30,8 +31,6 @@ public class HomeActivity extends AppCompatActivity {
         payPalButton.setVisibility(View.INVISIBLE);
 
         boolean hasAddedPaypal = true;
-//        deleteFile("paypal_credentials");
-
         try(FileInputStream fis = openFileInput("paypal_credentials")) {
         } catch (FileNotFoundException e) {
             payPalButton.setVisibility(View.VISIBLE);
@@ -40,23 +39,6 @@ public class HomeActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        FileInputStream fis = null;
-//        try {
-//            fis = openFileInput("paypal_credentials");
-//        }catch (java.io.FileNotFoundException e){
-//            payPalButton.setVisibility(View.VISIBLE);
-//            hasAddedPaypal = false;
-//            e.printStackTrace();
-//        }catch(java.io.IOException e){
-//            e.printStackTrace();
-//        }finally {
-//            try {
-//                fis.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
 
         if(!hasAddedPaypal) {
             payPalButton.setOnClickListener(new View.OnClickListener() {

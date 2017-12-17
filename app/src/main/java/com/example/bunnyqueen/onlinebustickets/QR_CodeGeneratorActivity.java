@@ -29,11 +29,11 @@ public class QR_CodeGeneratorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr__code_generator);
 
-        String busInfo = "";
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            busInfo = extras.getString("busInfo");
-        }
+//        String busInfo = "";
+//        Bundle extras = getIntent().getExtras();
+//        if (extras != null) {
+//            busInfo = extras.getString("busInfo");
+//        }
 
 //        TextView busInfoDisplay = (TextView) findViewById(R.id.busInfo);
 //        busInfoDisplay.setText(busInfo);
