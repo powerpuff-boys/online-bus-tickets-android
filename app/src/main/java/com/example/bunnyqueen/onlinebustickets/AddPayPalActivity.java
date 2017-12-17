@@ -31,13 +31,11 @@ public class AddPayPalActivity extends AppCompatActivity {
         addPaypalButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 EditText email = findViewById(R.id.email);
-                //email.getText().toString();
+
 
                 EditText pass = findViewById(R.id.password);
-               // pass.getText().toString();
 
                 String FILENAME = "paypal_credentials";
-
                 try {
                     FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
                     fos.write(email.getText().toString().getBytes());

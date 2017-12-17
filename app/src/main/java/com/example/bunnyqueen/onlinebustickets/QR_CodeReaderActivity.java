@@ -2,6 +2,8 @@ package com.example.bunnyqueen.onlinebustickets;
 
 import android.*;
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.vision.CameraSource;
@@ -122,21 +125,22 @@ public class QR_CodeReaderActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                    gotoNextActivity();
                     //gotoNextActivity(qrcodes.valueAt(0).displayValue);
-                    gotoNextActivity(ticket);
+                    //gotoNextActivity(ticket.getId());
                 }
             }
         });
     }
 
-    public void gotoNextActivity(Ticket t) {
-        Intent i = new Intent(QR_CodeReaderActivity.this,TicketInformationActivity.class);
-        i.putExtra("ticketInfo",t.getId());
+    public void gotoNextActivity() {
+        Intent i = new Intent(QR_CodeReaderActivity.this,PayPalPaymentActivity.class);
         startActivity(i);
     }
-//    public void gotoNextActivity(String busInfo) {
-//        Intent i = new Intent(QR_CodeReaderActivity.this, TicketInformationActivity.class);
-//        i.putExtra("busInfo", busInfo);
+
+//    public void gotoNextActivity(String ticketId) {
+//        Intent i = new Intent(QR_CodeReaderActivity.this,PayPalPaymentActivity.class);
+//        i.putExtra("ticketInfo",ticketId);
 //        startActivity(i);
 //    }
 }

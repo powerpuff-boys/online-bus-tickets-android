@@ -34,10 +34,11 @@ public class QR_CodeGeneratorActivity extends AppCompatActivity {
         if (extras != null) {
             busInfo = extras.getString("busInfo");
         }
-        TextView busInfoDisplay = (TextView) findViewById(R.id.busInfo);
-        busInfoDisplay.setText(busInfo);
 
-        text = (EditText) findViewById(R.id.text);
+//        TextView busInfoDisplay = (TextView) findViewById(R.id.busInfo);
+//        busInfoDisplay.setText(busInfo);
+
+//        text = (EditText) findViewById(R.id.text);
         image = (ImageView) findViewById(R.id.image);
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
@@ -48,6 +49,5 @@ public class QR_CodeGeneratorActivity extends AppCompatActivity {
         } catch (WriterException we) {
             we.printStackTrace();
         }
-
     }
 }

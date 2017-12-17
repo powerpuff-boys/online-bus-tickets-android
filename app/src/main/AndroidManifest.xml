@@ -45,7 +45,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity" />
         </activity>
-        <activity android:name=".AddPayPalActivity"></activity>
+        <activity android:name=".AddPayPalActivity" />
+        <activity android:name=".PayPalPaymentActivity"></activity>
     </application>
 
 </manifest>
