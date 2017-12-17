@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#a49c7e</color>
+    <color name="colorPrimaryDark">#a49c7e</color>
+    <color name="colorAccent">#a36457</color>
+    <color name="add_paypal">#5791a3</color>
+    <color name="mutedBGcolor">#dde6c4</color>
+</resources>
